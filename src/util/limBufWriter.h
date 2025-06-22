@@ -4,7 +4,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include <util/dag_safeArg.h>
-
+#include <osApiWrappers/dag_compilerDefs.h>
 #include <supply/dag_define_KRNLIMP.h>
 
 //! this class allows safe formatted printing to fixed-sized buffer

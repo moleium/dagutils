@@ -482,7 +482,12 @@ MAX_RELEASE_CHECK_RATE   default: 4095 unless not HAVE_MMAP
   improvement at the expense of carrying around more memory.
 */
 #include "stdRtlMemUsage.h"
-#include <Windows.h>
+
+#if _TARGET_PC_WIN
+  #include <Windows.h>
+#elif _TARGET_PC_LINUX
+  #include <sys/mman.h>
+#endif
 
 #if !defined(_STD_RTL_MEMORY) || defined(_DLMALLOC_MSPACE)
 #include "dlmalloc-2.8.4.h"

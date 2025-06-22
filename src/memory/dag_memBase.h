@@ -4,6 +4,7 @@
 //
 #pragma once
 
+#include <osApiWrappers/dag_compilerDefs.h>
 #include <stddef.h>
 #include <util/dag_preprocessor.h>
 

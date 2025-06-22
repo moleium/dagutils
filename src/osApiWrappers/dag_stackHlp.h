@@ -4,6 +4,7 @@
 //
 #pragma once
 
+#include <stddef.h>
 #include <util/dag_stdint.h>
 #include <supply/dag_define_KRNLIMP.h>
 

@@ -4,6 +4,8 @@
 //
 #pragma once
 
+#include <osApiWrappers/dag_compilerDefs.h>
+
 class IMemAlloc;
 
 /// macro for defining member operators new and delete

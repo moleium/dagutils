@@ -1,6 +1,6 @@
 // Copyright (C) Gaijin Games KFT.  All rights reserved.
 
-#include "allocStep.H"
+#include "allocStep.h"
 
 #if _TARGET_64BIT && !_TARGET_STATIC_LIB
 size_t dagormem_first_pool_sz = size_t(8192) << 20;

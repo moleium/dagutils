@@ -1,4 +1,4 @@
-#include "bitstream.h"
+#include <bitstream/bitstream.h>
 #include <EASTL/string.h>
 #include <EASTL/vector.h>
 #include <stdio.h>
@@ -26,10 +26,10 @@ bool parseCatData(danet::BitStream &stream, CatData &cat) {
 int main() {
   danet::BitStream writeStream;
 
-  writeStream.WriteCompressed(uint16_t(42));        // catId = 42
-  writeStream.Write(eastl::string("Whiskers")); // catName = "Whiskers"
-  writeStream.Write(uint8_t(3));                    // ageYears = 3
-  writeStream.Write(true);                          // isSleeping = true
+  writeStream.WriteCompressed(uint16_t(42));
+  writeStream.Write(eastl::string("Whiskers"));
+  writeStream.Write(uint8_t(3));
+  writeStream.Write(true);
 
   const uint8_t *data = writeStream.GetData();
   size_t size = writeStream.GetNumberOfBytesUsed();
