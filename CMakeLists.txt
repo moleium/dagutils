@@ -8,7 +8,6 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 add_subdirectory(vendor/eastl)
 
 set(COMMON_SOURCES
-  src/main.cpp
   src/memory/mem.cpp
   src/memory/dlmalloc-2.8.4.cpp
   src/memory/allocStep.cpp
