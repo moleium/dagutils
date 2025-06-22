@@ -39,7 +39,7 @@ elseif(UNIX AND NOT APPLE)
   list(APPEND PROJECT_SOURCES ${LINUX_SOURCES})
 endif()
 
-add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})
+add_library(${PROJECT_NAME} STATIC ${PROJECT_SOURCES})
 
 target_include_directories(${PROJECT_NAME} PRIVATE
   src
