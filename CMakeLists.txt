@@ -47,6 +47,11 @@ target_include_directories(${PROJECT_NAME} PRIVATE
   $<TARGET_PROPERTY:EASTL,INTERFACE_INCLUDE_DIRECTORIES>
 )
 
+target_include_directories(${PROJECT_NAME} PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
+)
+
 if(WIN32)
   target_compile_definitions(${PROJECT_NAME} PRIVATE _TARGET_PC_WIN)
 elseif(UNIX AND NOT APPLE)
