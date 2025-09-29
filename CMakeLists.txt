@@ -49,6 +49,7 @@ add_library(${PROJECT_NAME} STATIC ${PROJECT_SOURCES})
 target_compile_definitions(${PROJECT_NAME} PUBLIC _TARGET_STATIC_LIB)
 
 target_include_directories(${PROJECT_NAME} PUBLIC
+  libs
   libs/core
   $<TARGET_PROPERTY:EASTL,INTERFACE_INCLUDE_DIRECTORIES>
 )
@@ -65,3 +66,5 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 8)
 endif()
 
 target_link_libraries(${PROJECT_NAME} PUBLIC EASTL)
+
+add_subdirectory(examples/datablock)
