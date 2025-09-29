@@ -239,17 +239,6 @@ struct DSA
     varValue.ibb3 = &bb;
     varType = TYPE_IBB3;
   }
-  // It's mostly intended for dev/debug; use these with caution: pointer to SIMD vectors may become invalid for some compilers
-  //void set(const __vec4f &v)
-  //{
-  //  varValue.p4 = (const Point4 *)&v;
-  //  varType = TYPE_P4;
-  //}
-  //void set(const __vec4i &v)
-  //{
-  //  varValue.ip4 = (const IPoint4 *)&v;
-  //  varType = TYPE_P4;
-  //}
 
   DSA(const DebugPrinter &v)
   {
@@ -263,6 +252,14 @@ struct DSA
     set(DebugConverter<T>::getDebugType(v));
   }
   DSA_KRNLIMP static int count_len(const char *fmt, const DSA *arg, int anum);
+  DSA_KRNLIMP static int print_fmt(char *buf, int len, const char *fmt, const DSA *arg, int anum);
+
+  DSA_KRNLIMP static int mixed_print_fmt(char *buf, int len, const char *fmt, const void *valist_or_dsa, int dsa_anum);
+
+#if _TARGET_STATIC_LIB || defined(__B_KERNEL_LIB) // to prevent mix 2 different RTL contexts
+  DSA_KRNLIMP static int fprint_fmt(void *fp, const char *fmt, const DSA *arg, int anum);
+  static int mixed_fprint_fmt(void *fp, const char *fmt, const void *valist_or_dsa, int dsa_num);
+#endif
 
 private:
   DSA(const DSA *); // prevent using *printf instead of *vprintf

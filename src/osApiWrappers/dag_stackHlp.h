@@ -4,6 +4,7 @@
 //
 #pragma once
 
+#include "util/dag_string.h"
 #include <stddef.h>
 #include <util/dag_stdint.h>
 #include <supply/dag_define_KRNLIMP.h>
@@ -21,9 +22,6 @@ KRNLIMP unsigned stackhlp_fill_stack_exact(void **stack, unsigned max_size, cons
 
 //! returns pointer out_buf filled with decoded call stack
 KRNLIMP const char *stackhlp_get_call_stack(char *out_buf, int out_buf_sz, const void *const *stack, unsigned max_size);
-
-//! returns string filled with decoded call stack
-KRNLIMP String stackhlp_get_call_stack_str(const void *const *stack, unsigned max_size);
 
 KRNLIMP void *stackhlp_get_bp();
 
@@ -62,7 +60,8 @@ inline unsigned fill_stack_exact(CallStackInfo stack, const void *ctx_ptr)
 
 inline const char *get_call_stack(char *buf, unsigned max_buf, CallStackInfo stack)
 {
-  return stackhlp_get_call_stack(buf, max_buf, stack.stack, stack.stackSize);
+  return nullptr;
+  //return stackhlp_get_call_stack(buf, max_buf, stack.stack, stack.stackSize);
 }
 
 // Simple wrapper for a array of void * with a size of N and a paired size.

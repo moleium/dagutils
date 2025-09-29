@@ -16,6 +16,12 @@ set(COMMON_SOURCES
   src/memory/stubRtl.cpp
   src/kernel/fatalerr.cpp
   src/osApiWrappers/limBufWriter.cpp
+  src/util/strImpl.cpp
+  src/math/defs.cpp
+  src/math/namemap.cpp
+  src/util/dag_safeArg.cpp
+
+  include/datablock/datablock.cpp
 )
 
 set(WINDOWS_SOURCES
@@ -40,7 +46,9 @@ endif()
 
 add_library(${PROJECT_NAME} STATIC ${PROJECT_SOURCES})
 
-target_include_directories(${PROJECT_NAME} PRIVATE
+target_compile_definitions(${PROJECT_NAME} PUBLIC _TARGET_STATIC_LIB)
+
+target_include_directories(${PROJECT_NAME} PUBLIC
   src
   include
   $<TARGET_PROPERTY:EASTL,INTERFACE_INCLUDE_DIRECTORIES>
@@ -52,14 +60,14 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 )
 
 if(WIN32)
-  target_compile_definitions(${PROJECT_NAME} PRIVATE _TARGET_PC_WIN)
+  target_compile_definitions(${PROJECT_NAME} PUBLIC _TARGET_PC_WIN)
 elseif(UNIX AND NOT APPLE)
-  target_compile_definitions(${PROJECT_NAME} PRIVATE _TARGET_PC_LINUX)
-  target_link_libraries(${PROJECT_NAME} PRIVATE pthread)
+  target_compile_definitions(${PROJECT_NAME} PUBLIC _TARGET_PC_LINUX)
+  target_link_libraries(${PROJECT_NAME} PUBLIC pthread)
 endif()
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-  target_compile_definitions(${PROJECT_NAME} PRIVATE _TARGET_64BIT)
+  target_compile_definitions(${PROJECT_NAME} PUBLIC _TARGET_64BIT)
 endif()
 
-target_link_libraries(${PROJECT_NAME} PRIVATE EASTL)
+target_link_libraries(${PROJECT_NAME} PUBLIC EASTL)

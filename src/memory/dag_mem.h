@@ -84,6 +84,8 @@ class IMemAlloc;
 
 #include <supply/dag_define_KRNLIMP.h>
 
+KRNLIMP void dagor_force_init_memmgr();
+
 /// analog of standard strdup()
 KRNLIMP char *str_dup(const char *s, IMemAlloc *a);
 
