@@ -68,3 +68,4 @@ endif()
 target_link_libraries(${PROJECT_NAME} PUBLIC EASTL)
 
 add_subdirectory(examples/datablock)
+add_subdirectory(examples/bitstream)
