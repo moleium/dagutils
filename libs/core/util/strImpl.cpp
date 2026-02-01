@@ -1,5 +1,5 @@
 // Copyright (C) Gaijin Games KFT.  All rights reserved.
-
+#include <ctype.h>
 #include <util/dag_string.h>
 #include <util/dag_globDef.h>
 #include <osApiWrappers/dag_stackHlp.h>
@@ -131,13 +131,23 @@ int String::avprintf(int, const char *fmt, const DagorSafeArg *arg, int anum)
 
 String &String::toLower()
 {
+#if _TARGET_PC_WIN
   _strlwr(data());
+#else
+  for (char *p = data(); p && *p; ++p)
+    *p = (char)tolower(*p);
+#endif
   return *this;
 }
 
 String &String::toUpper()
 {
+#if _TARGET_PC_WIN
   _strupr(data());
+#else
+  for (char *p = data(); p && *p; ++p)
+    *p = (char)toupper(*p);
+#endif
   return *this;
 }
 

@@ -1,7 +1,9 @@
 #pragma once
 
-#if !defined(_MSC_VER) && !defined(__forceinline)
+#if !defined(_MSC_VER)
+#include <strings.h>
 #define __forceinline inline __attribute__((always_inline))
+#define stricmp strcasecmp
 #endif
 
 #if !defined(_MSC_VER)

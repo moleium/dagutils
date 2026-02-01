@@ -7,6 +7,12 @@
 #include <EASTL/type_traits.h>
 #include <string.h>
 
+#if !defined(_MSC_VER)
+#include <strings.h>
+#define __forceinline inline __attribute__((always_inline))
+#define stricmp strcasecmp
+#endif
+
 template <typename To, typename From>
 __forceinline To bitwise_cast(const From &from)
 {

@@ -84,8 +84,12 @@ typedef float real;
 /// converts radians to degrees
 #define RadToDeg(rad) ((real)(rad)*RAD_TO_DEG)
 
-#define INLINE __forceinline
-
+#if defined(_TARGET_PC_LINUX) || defined(__linux__)
+  #define __forceinline inline __attribute__((always_inline))
+  #define INLINE __forceinline
+#else
+  #define INLINE __forceinline
+#endif
 
 INLINE float rabs(float a) { return fabsf(a); }
 

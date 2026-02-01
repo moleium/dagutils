@@ -1,7 +1,6 @@
 // Copyright (C) Gaijin Games KFT.  All rights reserved.
 
 #include <stdio.h>
-#include <io.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -1054,7 +1053,9 @@ bool DataBlock::load(const char *fname)
     valid = false;
     return false;
   }
-  int len = filelength(fileno(h));
+  fseek(h, 0, SEEK_END);
+  int len = (int)ftell(h);
+  fseek(h, 0, SEEK_SET);
   if (len == -1L || len < 0)
   {
     fclose(h);
