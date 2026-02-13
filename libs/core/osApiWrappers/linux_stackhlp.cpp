@@ -1,12 +1,21 @@
-#include <execinfo.h>
 #include <osApiWrappers/dag_stackHlp.h>
 #include <stdlib.h>
 #include <string.h>
 #include <vector>
 
+#if !defined(__EMSCRIPTEN__) && defined(__GLIBC__)
+#include <execinfo.h>
+#endif
+
 inline int clamp0(int a) { return a > 0 ? a : 0; }
 
 unsigned stackhlp_fill_stack(void **stack, unsigned max_size, int skip_frames) {
+#if defined(__EMSCRIPTEN__) || !defined(__GLIBC__)
+  (void)stack;
+  (void)max_size;
+  (void)skip_frames;
+  return 0;
+#else
   std::vector<void *> temp_stack(max_size + skip_frames + 1);
   int nframes = backtrace(temp_stack.data(), temp_stack.size());
 
@@ -21,6 +30,7 @@ unsigned stackhlp_fill_stack(void **stack, unsigned max_size, int skip_frames) {
     stack[nframes] = (void *)(~uintptr_t(0));
 
   return nframes;
+#endif
 }
 
 unsigned stackhlp_fill_stack_exact(void **stack, unsigned max_size,
@@ -33,6 +43,12 @@ unsigned stackhlp_fill_stack_exact(void **stack, unsigned max_size,
 const char *stackhlp_get_call_stack(char *out_buf, int out_buf_sz,
                                     const void *const *stack,
                                     unsigned max_size) {
+#if defined(__EMSCRIPTEN__) || !defined(__GLIBC__)
+  if (out_buf && out_buf_sz > 0)
+    *out_buf = '\0';
+  (void)stack;
+  (void)max_size;
+#else
   char **symbols =
       backtrace_symbols(const_cast<void *const *>(stack), max_size);
   if (out_buf && out_buf_sz > 0)
@@ -48,6 +64,7 @@ const char *stackhlp_get_call_stack(char *out_buf, int out_buf_sz,
     }
     free(symbols);
   }
+#endif
   return out_buf;
 }
 

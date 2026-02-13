@@ -1,7 +1,8 @@
 // Copyright (C) Gaijin Games KFT.  All rights reserved.
 #pragma once
 
-#if _TARGET_C1 | _TARGET_C2 | _TARGET_APPLE | _TARGET_PC_LINUX | _TARGET_ANDROID | _TARGET_C3
+#if _TARGET_C1 | _TARGET_C2 | _TARGET_APPLE | _TARGET_PC_LINUX |               \
+    _TARGET_ANDROID | _TARGET_C3
 #define _STD_RTL_MEMORY 1
 #elif defined(__clang__) && defined(__has_feature)
 #if __has_feature(address_sanitizer)
@@ -44,7 +45,9 @@ inline void *valloc(size_t sz) { return memalign(4096, sz); }
 #endif
 inline size_t sys_malloc_usable_size(void *p) { return malloc_usable_size(p); }
 #elif _TARGET_PC_WIN && !_TARGET_64BIT && !USE_MIMALLOC
-inline size_t sys_malloc_usable_size(void *p) { return p ? _aligned_msize(p, 16, 0) : 0; }
+inline size_t sys_malloc_usable_size(void *p) {
+  return p ? _aligned_msize(p, 16, 0) : 0;
+}
 #else
 inline size_t sys_malloc_usable_size(void *p) { return p ? _msize(p) : 0; }
 #endif
@@ -54,7 +57,8 @@ inline size_t sys_malloc_usable_size(void *p) { return p ? _msize(p) : 0; }
 inline void *dlmalloc(size_t sz) { return malloc(sz); }
 inline void *dlrealloc(void *p, size_t sz) { return realloc(p, sz); }
 #else
-#error 32bit not supported
+inline void *dlmalloc(size_t sz) { return malloc(sz); }
+inline void *dlrealloc(void *p, size_t sz) { return realloc(p, sz); }
 #endif // _TARGET_64BIT
 #elif _TARGET_PC_WIN && !_TARGET_64BIT && !USE_MIMALLOC
 inline void *dlmalloc(size_t sz) { return _aligned_malloc(sz, 16); }
@@ -66,7 +70,9 @@ inline void *dlmalloc(size_t sz) { return malloc(sz); }
 
 #if _TARGET_PC_WIN && !_TARGET_64BIT && !USE_MIMALLOC
 inline void dlfree(void *p) { return _aligned_free(p); }
-inline void *dlrealloc(void *p, size_t sz) { return _aligned_realloc(p, sz, 16); }
+inline void *dlrealloc(void *p, size_t sz) {
+  return _aligned_realloc(p, sz, 16);
+}
 #elif _TARGET_PC_LINUX | _TARGET_ANDROID
 inline void dlfree(void *p) { return free(p); }
 #else
@@ -76,9 +82,9 @@ inline void *dlrealloc(void *p, size_t sz) { return realloc(p, sz); }
 
 #if (_TARGET_PC_WIN | _TARGET_XBOX) && !USE_MIMALLOC
 inline void dlfree_aligned(void *p) { return _aligned_free(p); }
-inline size_t dlmalloc_usable_size_aligned(void *p)
-{
-  // _aligned_msize() returns weird values when alignment is unknown, so we calculate usable size ourself
+inline size_t dlmalloc_usable_size_aligned(void *p) {
+  // _aligned_msize() returns weird values when alignment is unknown, so we
+  // calculate usable size ourself
   static constexpr int PTR_SZ = sizeof(void *);
   if (!p)
     return 0;
@@ -90,7 +96,8 @@ inline size_t dlmalloc_usable_size_aligned(void *p)
 
 #if DAGOR_DBGLEVEL > 1
   {
-/* but in debug builds struct _AlignMemBlockHdr goes before the allocated block */
+/* but in debug builds struct _AlignMemBlockHdr goes before the allocated block
+ */
 /* it consists of a pointer to the beginning of the block */
 /* and a gap consisting of sizeof(void *) bytes filled with 0xED value */
 #ifdef _TARGET_64BIT
@@ -98,8 +105,7 @@ inline size_t dlmalloc_usable_size_aligned(void *p)
 #else
     constexpr const uintptr_t aligned_nomansland = 0xEDEDEDEDul;
 #endif
-    if (ptr == aligned_nomansland)
-    {
+    if (ptr == aligned_nomansland) {
       ptrPtr--;
       ptr = *ptrPtr;
     }
@@ -110,24 +116,27 @@ inline size_t dlmalloc_usable_size_aligned(void *p)
 }
 #else
 inline void dlfree_aligned(void *p) { return free(p); }
-inline size_t dlmalloc_usable_size_aligned(void *p) { return sys_malloc_usable_size(p); }
+inline size_t dlmalloc_usable_size_aligned(void *p) {
+  return sys_malloc_usable_size(p);
+}
 #endif
 
 #if _TARGET_C1 | _TARGET_C2
 
-
 #elif _TARGET_PC_WIN | _TARGET_XBOX
-inline void *dlmemalign(size_t alignment, size_t sz) { return _aligned_malloc(sz, alignment); }
+inline void *dlmemalign(size_t alignment, size_t sz) {
+  return _aligned_malloc(sz, alignment);
+}
 inline void *dlvalloc(size_t sz) { return _aligned_malloc(sz, 4096); }
 #elif _TARGET_PC_LINUX | _TARGET_ANDROID
-inline void *dlmemalign(size_t alignment, size_t sz) { return memalign(alignment, sz); }
+inline void *dlmemalign(size_t alignment, size_t sz) {
+  return memalign(alignment, sz);
+}
 inline void *dlvalloc(size_t sz) { return valloc(sz); }
 #elif _TARGET_C3
 
-
 #else
-inline void *dlmemalign(size_t alignment, size_t sz)
-{
+inline void *dlmemalign(size_t alignment, size_t sz) {
   if (alignment <= 16)
     return malloc(sz);
   if (alignment <= 4096)
@@ -144,8 +153,10 @@ extern "C" size_t get_memory_committed_max();
 
 #if !_TARGET_STATIC_LIB
 extern "C" __declspec(dllexport) void *mt_dlmalloc_crt(size_t bytes);
-extern "C" __declspec(dllexport) void *mt_dlmemalign_crt(size_t bytes, size_t alignment);
-extern "C" __declspec(dllexport) void *mt_dlrealloc_crt(void *mem, size_t bytes);
+extern "C" __declspec(dllexport) void *mt_dlmemalign_crt(size_t bytes,
+                                                         size_t alignment);
+extern "C" __declspec(dllexport) void *mt_dlrealloc_crt(void *mem,
+                                                        size_t bytes);
 extern "C" __declspec(dllexport) void mt_dlfree_crt(void *mem);
 #endif
 
@@ -153,7 +164,9 @@ extern "C" void dlfree(void *);
 inline void dlfree_aligned(void *p) { dlfree(p); }
 
 extern "C" size_t dlmalloc_usable_size(void *);
-inline size_t dlmalloc_usable_size_aligned(void *p) { return dlmalloc_usable_size(p); }
+inline size_t dlmalloc_usable_size_aligned(void *p) {
+  return dlmalloc_usable_size(p);
+}
 #endif
 
 extern int pull_rtlOverride_stubRtl;

@@ -56,6 +56,14 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 
 if(WIN32)
   target_compile_definitions(${PROJECT_NAME} PUBLIC _TARGET_PC_WIN)
+elseif(EMSCRIPTEN)
+  target_compile_definitions(${PROJECT_NAME} PUBLIC
+      _TARGET_PC_LINUX
+      _TARGET_STATIC_LIB
+      __LINUX__
+      EA_PLATFORM_LINUX
+      __ARM_EABI__
+  )
 elseif(UNIX AND NOT APPLE)
   target_compile_definitions(${PROJECT_NAME} PUBLIC _TARGET_PC_LINUX)
   target_link_libraries(${PROJECT_NAME} PUBLIC pthread)
@@ -65,7 +73,37 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 8)
   target_compile_definitions(${PROJECT_NAME} PUBLIC _TARGET_64BIT)
 endif()
 
+if(EMSCRIPTEN)
+  target_compile_definitions(EASTL PUBLIC
+      EA_PLATFORM_LINUX
+      __ARM_EABI__
+      __LINUX__
+      _TARGET_STATIC_LIB
+      EASTL_DEBUG_BREAK_OVERRIDE
+      "EASTL_DEBUG_BREAK()=void(0)"
+  )
+endif()
+
 target_link_libraries(${PROJECT_NAME} PUBLIC EASTL)
 
-add_subdirectory(examples/datablock)
-add_subdirectory(examples/bitstream)
+if(EMSCRIPTEN)
+  add_executable(dagutils_wasm wasm/bindings.cpp)
+  target_link_libraries(dagutils_wasm PRIVATE dagutils)
+  
+  target_compile_options(dagutils_wasm PRIVATE
+  )
+
+  target_link_options(dagutils_wasm PRIVATE
+      "SHELL:-s DISABLE_EXCEPTION_CATCHING=0"
+      "SHELL:-s WASM=1"
+      "SHELL:-s ALLOW_MEMORY_GROWTH=1"
+      "SHELL:-s MODULARIZE=1"
+      "SHELL:-s EXPORT_ES6=1"
+      "SHELL:-s EXPORT_NAME='createDagUtilsModule'"
+      "SHELL:-s ENVIRONMENT=web"
+      "SHELL:--bind"
+  )
+else()
+  add_subdirectory(examples/datablock)
+  add_subdirectory(examples/bitstream)
+endif()
